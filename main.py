@@ -15,6 +15,8 @@ pygame.display.set_caption("Flappy Bird")
 # game variables
 ground_scroll = 0
 scroll_speed = 4
+flying = False
+game_over = False
 
 # load images
 bg = pygame.image.load("./img/bg.png")
@@ -29,6 +31,7 @@ class Bird(pygame.sprite.Sprite):
         self.index = 0
         self.counter = 0
         self.vel = 0
+        self.clicked = False
 
         # load all flappy bird images for animation
         for num in range(1, 4):
@@ -41,25 +44,39 @@ class Bird(pygame.sprite.Sprite):
 
     def update(self):
         # handle velocity change
-        self.vel += 0.5
-        if self.vel > 8:
-            self.vel = 8
+        if flying:
+            self.vel += 0.5
+            if self.vel > 8:
+                self.vel = 8
 
         if self.rect.bottom < 768:
             self.rect.y += int(self.vel)
 
-        # handle the animation
-        self.counter += 1
-        flap_cooldown = 5
+        if game_over == False:
+            # jump
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+                self.clicked = True
+                self.vel = -7
+            if pygame.mouse.get_pressed()[0] == 0:
+                self.clicked = False
 
-        if self.counter > flap_cooldown:
-            self.counter = 0
-            self.index += 1
+            # handle the animation
+            self.counter += 1
+            flap_cooldown = 5
 
-            if self.index >= len(self.images):
-                self.index = 0
+            if self.counter > flap_cooldown:
+                self.counter = 0
+                self.index += 1
 
-        self.image = self.images[self.index]
+                if self.index >= len(self.images):
+                    self.index = 0
+
+            self.image = self.images[self.index]
+
+            # rotate the bird
+            self.image = pygame.transform.rotate(self.images[self.index], self.vel * -2)
+        else:
+            self.image = pygame.transform.rotate(self.images[self.index], -90)
 
 
 bird_group = pygame.sprite.Group()
@@ -76,21 +93,33 @@ while run:
     # Draw background
     screen.blit(bg, (0, 0))
 
-    # draw bird
+    # draw amd update bird
     bird_group.draw(screen)
-
-    # update bird
     bird_group.update()
 
-    # Draw and scroll the ground
+    # draw the ground
     screen.blit(ground_img, (ground_scroll, 768))
-    ground_scroll -= scroll_speed
-    if abs(ground_scroll) > 35:
-        ground_scroll = 0
+
+    # check if bird has hit the ground
+    if flappy.rect.bottom > 768:
+        game_over = True
+        flying = False
+
+    # Draw and scroll the ground
+    if game_over == False:
+        ground_scroll -= scroll_speed
+        if abs(ground_scroll) > 35:
+            ground_scroll = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if (
+            event.type == pygame.MOUSEBUTTONDOWN
+            and flying == False
+            and game_over == False
+        ):
+            flying = True
 
     pygame.display.update()
 
