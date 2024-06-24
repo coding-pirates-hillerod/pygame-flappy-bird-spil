@@ -29,8 +29,9 @@ class Bird(pygame.sprite.Sprite):
         self.images = []
         self.index = 0
         self.counter = 0
+        self.vel = 0
 
-        # load all flappy bird imgages
+        # load all flappy bird images for animation
         for num in range(1, 4):
             img = pygame.image.load(f"./img/bird{num}.png")
             self.images.append(img)
@@ -40,6 +41,14 @@ class Bird(pygame.sprite.Sprite):
         self.rect.center = [x, y]
 
     def update(self):
+        # handle velocity change
+        self.vel += 0.5
+        if self.vel > 8:
+            self.vel = 8
+
+        if self.rect.bottom < 768:
+            self.rect.y += int(self.vel)
+
         # handle the animation
         self.counter += 1
         flap_cooldown = 5
