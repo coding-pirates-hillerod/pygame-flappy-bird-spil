@@ -21,3 +21,7 @@ pip install -r requirements.txt
 ```
 
 ### Start spillet
+Start spillet vhja.
+```python
+python main.py
+```
