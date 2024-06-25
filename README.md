@@ -2,6 +2,10 @@
 
 Klon dette repo for at spille en omgang awesome 'Flappy Bird'.
 
+
+https://github.com/coding-pirates-hillerod/pygame-flappy-bird-spil/assets/21309287/2013071d-e45d-457e-bd36-34054580a7e1
+
+
 Koden til spillet er baseret på Coding Pirates Hillerøds 'Pygame - Flappy Bird' YouTube playliste som samler alle 6 videoer til spillet fra
 YouTube kanalen "Coding With Russ".
 
