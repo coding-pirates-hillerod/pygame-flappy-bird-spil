@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import random
 from sprites.bird import Bird
+from sprites.pipe import Pipe
 
 pygame.init()
 
@@ -48,26 +49,6 @@ def reset_game():
     flappy.rect.y = int(screen_height / 2)
     score = 0
     return score
-
-
-class Pipe(pygame.sprite.Sprite):
-    def __init__(self, x: int, y: int, position: int) -> None:
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("./img/pipe.png")
-        self.rect = self.image.get_rect()
-
-        # position 1 is from the top, -1 is from the bottom
-        if position == 1:
-            self.image = pygame.transform.flip(self.image, False, True)
-            self.rect.bottomleft = [x, y - int(pipe_gap / 2)]
-        if position == -1:
-            self.rect.topleft = [x, y + int(pipe_gap / 2)]
-
-    def update(self) -> None:
-        self.rect.x -= scroll_speed
-
-        if self.rect.right < 0:
-            self.kill()
 
 
 class Button:
@@ -155,8 +136,12 @@ while run:
         if time_now - last_pipe > pipe_frquency:
             pipe_height = random.randint(-100, 100)
 
-            btm_pipe = Pipe(screen_width, int(screen_height / 2) + pipe_height, -1)
-            top_pipe = Pipe(screen_width, int(screen_height / 2) + pipe_height, 1)
+            btm_pipe = Pipe(
+                screen_width, int(screen_height / 2) + pipe_height, -1, pipe_gap
+            )
+            top_pipe = Pipe(
+                screen_width, int(screen_height / 2) + pipe_height, 1, pipe_gap
+            )
             pipe_group.add(btm_pipe)
             pipe_group.add(top_pipe)
             last_pipe = time_now
@@ -166,7 +151,7 @@ while run:
         if abs(ground_scroll) > 35:
             ground_scroll = 0
 
-        pipe_group.update()
+        pipe_group.update(scroll_speed)
 
     # check for game over and reset
     if game_over == True:
