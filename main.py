@@ -3,6 +3,7 @@ from pygame.locals import *
 import random
 from sprites.bird import Bird
 from sprites.pipe import Pipe
+from sprites.button import Button
 
 pygame.init()
 
@@ -49,29 +50,6 @@ def reset_game():
     flappy.rect.y = int(screen_height / 2)
     score = 0
     return score
-
-
-class Button:
-    def __init__(self, x, y, image) -> None:
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-
-    def draw(self):
-        action = False
-
-        # get mouse position
-        pos = pygame.mouse.get_pos()
-
-        # check if mouse is over the button
-        if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1:
-                action = True
-
-        # draw button
-        screen.blit(self.image, (self.rect.x, self.rect.y))
-
-        return action
 
 
 # sprites
@@ -155,7 +133,7 @@ while run:
 
     # check for game over and reset
     if game_over == True:
-        if button.draw() == True:
+        if button.draw(screen) == True:
             game_over = False
             score = reset_game()
 
